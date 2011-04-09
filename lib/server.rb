@@ -36,7 +36,7 @@ class Server
           @clients << sender
           broadcast([Commands::CONNECT, sender[3]].pack('n a*x'))
           @points.each do |point|
-            @socket.send([Commands::DRAW, '', point[0], point[1]].pack('n Z* n n'), 0, Addrinfo.new(sender))
+            @socket.send([Commands::DRAW, '', point[0], point[1], point[2]].pack('n Z* n n n'), 0, Addrinfo.new(sender))
           end
           puts "CONNECT #{sender[3]}"
         end
