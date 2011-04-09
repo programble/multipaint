@@ -14,6 +14,9 @@ class GameWindow < Gosu::Window
     @lines = ['', '', '']
     @points = []
     
+    @colors = [Gosu::Color::BLACK, Gosu::Color::GRAY, Gosu::Color::RED, Gosu::Color::GREEN, Gosu::Color::BLUE, Gosu::Color::YELLOW, Gosu::Color::FUCHSIA, Gosu::Color::CYAN]
+    @color = 0
+    
     @socket = UDPSocket.new
     @socket.connect(host, port)
     @socket.send([Commands::CONNECT].pack('n'), 0)
@@ -31,7 +34,7 @@ class GameWindow < Gosu::Window
   
   def update
     if button_down? Gosu::Button::MsLeft
-      @socket.send([Commands::DRAW, mouse_x, mouse_y].pack('n n n'), 0)
+      @socket.send([Commands::DRAW, mouse_x, mouse_y, @color].pack('n n n n'), 0)
     elsif button_down? Gosu::Button::MsRight
       @socket.send([Commands::ERASE, mouse_x, mouse_y].pack('n n n'), 0)
     end
@@ -50,10 +53,10 @@ class GameWindow < Gosu::Window
         user = data.unpack('n Z*')[1]
         append_line("#{user} disconnected")
       when Commands::DRAW
-        coords = data.unpack('n Z* n n')[2..3]
+        coords = data.unpack('n Z* n n n')[2..4]
         @points << coords
       when Commands::ERASE
-        coords = data.unpack('n Z* n n')[2..3]
+        coords = data.unpack('n Z* n n n')[2..4]
         @points.delete(coords)
       when Commands::MESSAGE
         user, msg = data.unpack('n Z* Z*')[1..2]
@@ -72,6 +75,12 @@ class GameWindow < Gosu::Window
     when Gosu::Button::KbReturn
       @socket.send([Commands::MESSAGE, self.text_input.text].pack('n Z*'), 0) if self.text_input
       self.text_input = nil
+    when Gosu::Button::MsWheelUp
+      @color += 1
+      @color = 0 if @color == @colors.length
+    when Gosu::Button::MsWheelDown
+      @color -= 1
+      @color = @colors.length - 1 if @color == -1
     end
   end
   
@@ -81,6 +90,7 @@ class GameWindow < Gosu::Window
   
   def draw
     draw_quad(0, 0, Gosu::Color::WHITE, width, 0, Gosu::Color::WHITE, 0, height, Gosu::Color::WHITE, width, height, Gosu::Color::WHITE, 0)
+    draw_quad(width - 20, 0, @colors[@color], width, 0, @colors[@color], width - 20, 20, @colors[@color], width, 20, @colors[@color], 3)
     y = 0
     @lines.each do |line|
       @font.draw(line, 0, y, 2, 1.0, 1.0, Gosu::Color::BLUE)
@@ -90,7 +100,7 @@ class GameWindow < Gosu::Window
     @points.each do |point|
       #draw_line(*a, Gosu::Color::BLACK, *b, Gosu::Color::BLACK, 2)
       #translate(*point) do
-        draw_quad(*point, Gosu::Color::BLACK, point[0] + 2, point[1], Gosu::Color::BLACK, point[0] + 2, point[1] + 2, Gosu::Color::BLACK, point[0], point[1] + 2, Gosu::Color::BLACK, 1)
+        draw_quad(point[0], point[1], @colors[point[2]], point[0] + 2, point[1], @colors[point[2]], point[0] + 2, point[1] + 2, @colors[point[2]], point[0], point[1] + 2, @colors[point[2]], 1)
       #end
     end
   end

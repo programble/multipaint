@@ -49,17 +49,17 @@ class Server
         broadcast([Commands::MESSAGE, sender[3], message].pack('n Z* Z*'))
         puts "MESSAGE #{sender[3]} #{message}"
       when Commands::DRAW
-        x, y = data.unpack('n n n')[1..2]
-        next if @points.include?([x,y])
-        @points << [x, y]
-        broadcast([Commands::DRAW, sender[3], x, y].pack('n Z* n n'))
-        puts "DRAW #{sender[3]} #{x} #{y}"
+        x, y, color = data.unpack('n n n n')[1..3]
+        next if @points.include?([x,y,color])
+        @points << [x, y, color]
+        broadcast([Commands::DRAW, sender[3], x, y, color].pack('n Z* n n n'))
+        puts "DRAW #{sender[3]} #{x} #{y} #{color}"
       when Commands::ERASE
         x, y = data.unpack('n n n')[1..2]
         erased = @points.select {|point| point[0] < x + 10 && point[0] > x - 10 && point[1] < y + 10 && point[1] > y - 10}
         erased.each do |point|
           @points.delete(point)
-          broadcast([Commands::ERASE, sender[3], point[0], point[1]].pack('n Z* n n'))
+          broadcast([Commands::ERASE, sender[3], point[0], point[1], point[2]].pack('n Z* n n n'))
           puts "ERASE #{sender[3]} #{point[0]} #{point[1]}"
         end
       end
