@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__)))
 require 'commands'
 
 class Server
-  def initialize(host='', port='5303')
+  def initialize(host='', port=5303)
     @socket = UDPSocket.new
     @socket.bind(host, port)
     @socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)

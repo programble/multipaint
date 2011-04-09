@@ -2,5 +2,5 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'server'
 
-server = Server.new
+server = Server.new(ARGV[0] || '', ARGV[1] ? ARGV[1].to_i : 5303)
 server.run
