@@ -13,7 +13,7 @@ class Server
   
   def broadcast(data)
     @clients.each do |client|
-      @socket.send(data, 0, Addrinfo.new(client))
+      @socket.send(data, Socket::MSG_DONTROUTE, Addrinfo.new(client))
     end
   end
   
