@@ -33,25 +33,27 @@ class GameWindow < Gosu::Window
     if button_down? Gosu::Button::MsLeft
       @socket.send([Commands::DRAW, mouse_x, mouse_y].pack('n n n'), 0)
     end
-    begin
-    data = @socket.recv_nonblock(65536)
-    rescue IO::WaitReadable
-    end
-    return unless data
-    command = data.unpack('n')[0]
-    case command
-    when Commands::CONNECT
-      user = data.unpack('n Z*')[1]
-      append_line("#{user} connected")
-    when Commands::DISCONNECT
-      user = data.unpack('n Z*')[1]
-      append_line("#{user} disconnected")
-    when Commands::DRAW
-      coords = data.unpack('n Z* n n')[2..3]
-      @points << coords
-    when Commands::MESSAGE
-      user, msg = data.unpack('n Z* Z*')[1..2]
-      append_line("#{user}: #{msg}")
+    while true
+      begin
+        data = @socket.recv_nonblock(65536)
+      rescue IO::WaitReadable
+        break
+      end
+      command = data.unpack('n')[0]
+      case command
+      when Commands::CONNECT
+        user = data.unpack('n Z*')[1]
+        append_line("#{user} connected")
+      when Commands::DISCONNECT
+        user = data.unpack('n Z*')[1]
+        append_line("#{user} disconnected")
+      when Commands::DRAW
+        coords = data.unpack('n Z* n n')[2..3]
+        @points << coords
+      when Commands::MESSAGE
+        user, msg = data.unpack('n Z* Z*')[1..2]
+        append_line("#{user}: #{msg}")
+      end
     end
   end
   
