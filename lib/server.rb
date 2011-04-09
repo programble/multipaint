@@ -13,7 +13,7 @@ class Server
   
   def broadcast(data)
     @clients.each do |client|
-      @socket.send(data, 0, client[2], client[1])
+      @socket.send(data, 0, client[3], client[1])
     end
   end
   
