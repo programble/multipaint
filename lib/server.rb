@@ -10,6 +10,7 @@ class Server
     @socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
     
     @clients = []
+    @points = []
   end
   
   def broadcast(data)
@@ -34,6 +35,9 @@ class Server
         else
           @clients << sender
           broadcast([Commands::CONNECT, sender[3]].pack('n a*x'))
+          @points.each do |point|
+            @socket.send([Commands::DRAW, '', point[0], point[1]].pack('n Z* n n'), 0, Addrinfo.new(client))
+          end
           puts "CONNECT #{sender[3]}"
         end
       when Commands::DISCONNECT
@@ -46,6 +50,7 @@ class Server
         puts "MESSAGE #{sender[3]} #{message}"
       when Commands::DRAW
         x, y = data.unpack('n n n')[1..2]
+        @points << [x, y]
         broadcast([Commands::DRAW, sender[3], x, y].pack('n Z* n n'))
         puts "DRAW #{sender[3]} #{x} #{y}"
       end

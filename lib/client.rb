@@ -80,11 +80,11 @@ class GameWindow < Gosu::Window
       y += 15
     end
     @font.draw(">#{text_input.text}", 0, 15*3, 1, 1.0, 1.0, Gosu::Color::BLACK) if self.text_input
-    @points.each_cons(2) do |a, b|
-      draw_line(*a, Gosu::Color::BLACK, *b, Gosu::Color::BLACK, 2)
-      #translate(*point) do
-      #  draw_quad(0, 0, Gosu::Color::BLACK, 5, 0, Gosu::Color::BLACK, 5, 5, Gosu::Color::BLACK, 0, 5, Gosu::Color::BLACK, 2)
-      #end
+    @points.each do |point|
+      #draw_line(*a, Gosu::Color::BLACK, *b, Gosu::Color::BLACK, 2)
+      translate(*point) do
+        draw_quad(0, 0, Gosu::Color::BLACK, 2, 0, Gosu::Color::BLACK, 2, 2, Gosu::Color::BLACK, 0, 2, Gosu::Color::BLACK, 2)
+      end
     end
   end
 end
