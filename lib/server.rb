@@ -50,6 +50,7 @@ class Server
         puts "MESSAGE #{sender[3]} #{message}"
       when Commands::DRAW
         x, y = data.unpack('n n n')[1..2]
+        next if @points.include?([x,y])
         @points << [x, y]
         broadcast([Commands::DRAW, sender[3], x, y].pack('n Z* n n'))
         puts "DRAW #{sender[3]} #{x} #{y}"
