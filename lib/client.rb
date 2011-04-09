@@ -6,7 +6,7 @@ require 'commands'
 
 class GameWindow < Gosu::Window
   def initialize(host, port=5303)
-    super(640, 480, false, 50)
+    super(640, 480, false)
     self.caption = "Multiplayer Paint"
     
     @font = Gosu::Font.new(self, Gosu::default_font_name, 15)
