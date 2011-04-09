@@ -56,7 +56,7 @@ class Server
         puts "DRAW #{sender[3]} #{x} #{y}"
       when Commands::ERASE
         x, y = data.unpack('n n n')[1..2]
-        erased = @points.select {|point| Gosu.distance(x, y, *x)}
+        erased = @points.select {|point| point[0] < x + 10 && point[0] > x - 10 && point[1] < y + 10 && point[1] > y - 10}
         erased.each do |point|
           @points.delete(erased)
           broadcast([Commands::ERASE, sender[3], point[0], point[1]].pack('n Z* n n'))
