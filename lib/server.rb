@@ -30,16 +30,12 @@ class Server
       
       case command
       when Commands::CONNECT
-        if @clients.include? sender
-          puts 'Ignoring a CONNECT command from a connected client'
-        else
-          @clients << sender
-          broadcast([Commands::CONNECT, sender[3]].pack('n a*x'))
-          @points.each do |point|
-            @socket.send([Commands::DRAW, '', point[0], point[1], point[2]].pack('n Z* n n n'), 0, Addrinfo.new(sender))
-          end
-          puts "CONNECT #{sender[3]}"
+        @clients << sender unless @clients.include?(sender)
+        broadcast([Commands::CONNECT, sender[3]].pack('n a*x'))
+        @points.each do |point|
+          @socket.send([Commands::DRAW, '', point[0], point[1], point[2]].pack('n Z* n n n'), 0, Addrinfo.new(sender))
         end
+        puts "CONNECT #{sender[3]}"
       when Commands::DISCONNECT
         @clients.delete(sender)
         broadcast([Commands::DISCONNECT, sender[3]].pack('n Z*'))

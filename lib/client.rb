@@ -81,6 +81,9 @@ class GameWindow < Gosu::Window
     when Gosu::Button::MsWheelDown
       @color -= 1
       @color = @colors.length - 1 if @color == -1
+    when Gosu::Button::KbF5
+      @points = []
+      @socket.send([Commands::CONNECT].pack('n'), 0)
     end
   end
   
