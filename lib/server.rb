@@ -58,7 +58,7 @@ class Server
         x, y = data.unpack('n n n')[1..2]
         erased = @points.select {|point| point[0] < x + 10 && point[0] > x - 10 && point[1] < y + 10 && point[1] > y - 10}
         erased.each do |point|
-          @points.delete(erased)
+          @points.delete(point)
           broadcast([Commands::ERASE, sender[3], point[0], point[1]].pack('n Z* n n'))
           puts "ERASE #{sender[3]} #{point[0]} #{point[1]}"
         end
