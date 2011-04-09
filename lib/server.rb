@@ -7,13 +7,14 @@ class Server
   def initialize(host='', port='5303')
     @socket = UDPSocket.new
     @socket.bind(host, port)
+    @socket.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
     
     @clients = []
   end
   
   def broadcast(data)
     @clients.each do |client|
-      @socket.send(data, Socket::MSG_DONTROUTE, Addrinfo.new(client))
+      @socket.send(data, 0, Addrinfo.new(client))
     end
   end
   
