@@ -24,7 +24,7 @@ class Server
       data, sender = @socket.recvfrom(65536)
       command = data.unpack('n')[0]
       if !@clients.include?(sender) && command != Commands::CONNECT
-        puts "Ignoring a ##{command} from a disconnected client"
+        puts "##{command} #{sender[3]} (IGNORED)"
         next
       end
       
