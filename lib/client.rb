@@ -32,6 +32,8 @@ class GameWindow < Gosu::Window
   def update
     if button_down? Gosu::Button::MsLeft
       @socket.send([Commands::DRAW, mouse_x, mouse_y].pack('n n n'), 0)
+    elsif button_down? Gosu::Button::MsRight
+      @socket.send([Commands::ERASE, mouse_x, mouse_y].pack('n n n'), 0)
     end
     while true
       begin
@@ -50,6 +52,9 @@ class GameWindow < Gosu::Window
       when Commands::DRAW
         coords = data.unpack('n Z* n n')[2..3]
         @points << coords
+      when Commands::ERASE
+        coords = data.unpack('n Z* n n')[2..3]
+        @points.delete(coords)
       when Commands::MESSAGE
         user, msg = data.unpack('n Z* Z*')[1..2]
         append_line("#{user}: #{msg}")
