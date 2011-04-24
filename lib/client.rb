@@ -41,7 +41,9 @@ class GameWindow < Gosu::Window
     while true
       begin
         data = @socket.recv_nonblock(65536)
-      rescue IO::WaitReadable
+      rescue Errno::EWOULDBLOCK
+        break
+      rescue Errno::AGAIN
         break
       end
       command = data.unpack('n')[0]
