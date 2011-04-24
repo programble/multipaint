@@ -24,7 +24,7 @@ class Server
       data, sender = @socket.recvfrom(65536)
       command = data.unpack('n')[0]
       if !@clients.include?(sender) && command != Commands::CONNECT
-        puts "##{command} #{sender[3]} (IGNORED)"
+        puts "#{data.inspect} #{sender[3]} (IGNORED)"
         next
       end
       
