@@ -20,6 +20,15 @@ class GameWindow < Gosu::Window
     @socket = UDPSocket.new
     @socket.connect(host, port)
     @socket.send([Commands::CONNECT].pack('n'), 0)
+    
+    Thread.new do
+      while true
+        @socket.send([Commands::PINGPONG, Time.now.to_f].pack('n G'), 0)
+        sleep 5
+      end
+    end
+    
+    @lastpong = Time.now.to_f
   end
   
   def append_line(line)
@@ -63,6 +72,9 @@ class GameWindow < Gosu::Window
       when Commands::MESSAGE
         user, msg = data.unpack('n Z* Z*')[1..2]
         append_line("#{user}: #{msg}")
+      when Commands::PINGPONG
+        time = data.unpack('n G')[1]
+        @lastpong = Time.now.to_f - time
       end
     end
   end
@@ -102,6 +114,8 @@ class GameWindow < Gosu::Window
       y += 15
     end
     @font.draw(">#{text_input.text}", 0, 15*3, 2, 1.0, 1.0, Gosu::Color::BLUE) if self.text_input
+    pingtext = "#{(@lastpong * 1000).round}ms"
+    @font.draw(pingtext, width - @font.text_width(pingtext) - 20, 0, 2, 1.0, 1.0, Gosu::Color::BLUE)
     @points.each do |point|
     #@points.each_cons(2) do |a, b|
       #draw_line(a[0], a[1], @colors[a[2]], b[0], b[1], @colors[b[2]], 1)

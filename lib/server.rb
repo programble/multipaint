@@ -58,6 +58,8 @@ class Server
           broadcast([Commands::ERASE, sender[3], point[0], point[1], point[2]].pack('n Z* n n n'))
           puts "ERASE #{sender[3]} #{point[0]} #{point[1]}"
         end
+      when Commands::PINGPONG
+        @socket.send(data, 0, Addrinfo.new(sender))
       end
     end
   end
