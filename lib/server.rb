@@ -23,7 +23,7 @@ class Server
     while true
       data, sender = @socket.recvfrom(65536)
       command = data.unpack('n')[0]
-      if !@clients.include?(sender) && command != Commands::CONNECT
+      if !@clients.map{|x|x[0..3]}.include?(sender) && command != Commands::CONNECT
         puts "#{data.inspect} #{sender[3]} (IGNORED)"
         next
       end
