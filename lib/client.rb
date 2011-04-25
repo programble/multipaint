@@ -24,7 +24,7 @@ class GameWindow < Gosu::Window
     Thread.new do
       while true
         @socket.send([Commands::PINGPONG, Time.now.to_f].pack('n G'), 0)
-        sleep 5
+        sleep 3
       end
     end
     
