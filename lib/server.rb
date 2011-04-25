@@ -55,8 +55,9 @@ class Server
         puts "DRAW #{sender[3]}/#{@nicks[sender]} #{x} #{y} #{color}"
       when Commands::ERASE
         x, y = data.unpack('n n n')[1..2]
-        puts "ERASE #{sender[3]}/#{@nicks[sender]} #{x} #{y}"
         erased = @points.select {|point| point[0] < x + 10 && point[0] > x - 10 && point[1] < y + 10 && point[1] > y - 10}
+        next if erased.empty?
+        puts "ERASE #{sender[3]}/#{@nicks[sender]} #{x} #{y}"
         erased.each {|point| @points.delete(point)}
         broadcast([Commands::ERASE, @nicks[sender], *erased.flatten].pack('n Z* n*'))
       when Commands::PINGPONG
