@@ -14,6 +14,8 @@ class GameWindow < Gosu::Window
     @lines = ['', '', '']
     @points = []
     
+    @lastdraw = nil
+    
     @colors = [Gosu::Color::BLACK, Gosu::Color::GRAY, Gosu::Color::RED, Gosu::Color::GREEN, Gosu::Color::BLUE, Gosu::Color::YELLOW, Gosu::Color::FUCHSIA, Gosu::Color::CYAN]
     @color = 0
     
@@ -64,10 +66,14 @@ class GameWindow < Gosu::Window
         user = data.unpack('n Z*')[1]
         append_line("#{user} disconnected")
       when Commands::DRAW
-        coords = data.unpack('n Z* n n n')[2..4]
+        unpacked = data.unpack('n Z* n n n')
+        coords = unpacked[2..4]
+        @lastdraw = unpacked[1]
         @points << coords
       when Commands::ERASE
-        coords = data.unpack('n Z* n n n')[2..4]
+        unpacked = data.unpack('n Z* n n n')
+        coords = unpacked[2..4]
+        @lastdraw = unpacked[1]
         @points.delete(coords)
       when Commands::MESSAGE
         user, msg = data.unpack('n Z* Z*')[1..2]
@@ -116,6 +122,7 @@ class GameWindow < Gosu::Window
     @font.draw(">#{text_input.text}", 0, 15*3, 2, 1.0, 1.0, Gosu::Color::BLUE) if self.text_input
     pingtext = "#{(@lastpong * 1000).round}ms"
     @font.draw(pingtext, width - @font.text_width(pingtext) - 20, 0, 2, 1.0, 1.0, Gosu::Color::BLUE)
+    @font.draw(@lastdraw, width - @font.text_width(@lastdraw) - 20, 15, 2, 1.0, 1.0, Gosu::Color::BLUE)
     @points.each do |point|
     #@points.each_cons(2) do |a, b|
       #draw_line(a[0], a[1], @colors[a[2]], b[0], b[1], @colors[b[2]], 1)
