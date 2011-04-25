@@ -59,6 +59,7 @@ class Server
           puts "ERASE #{sender[3]} #{point[0]} #{point[1]}"
         end
       when Commands::PINGPONG
+        puts "PING #{sender[3]} #{data.inspect}"
         @socket.send(data, 0, Addrinfo.new(sender))
       end
     end
