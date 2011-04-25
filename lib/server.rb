@@ -58,7 +58,7 @@ class Server
         erased = @points.select {|point| point[0] < x + 10 && point[0] > x - 10 && point[1] < y + 10 && point[1] > y - 10}
         next if erased.empty?
         puts "ERASE #{sender[3]}/#{@nicks[sender]} #{x} #{y}"
-        erased.each {|point| @points.delete(point)}
+        Thread.new { erased.each {|point| @points.delete(point)} }
         broadcast([Commands::ERASE, @nicks[sender], *erased.flatten].pack('n Z* n*'))
       when Commands::PINGPONG
         puts "PING #{sender[3]}/#{@nicks[sender]} #{data.inspect}"
