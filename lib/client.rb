@@ -9,12 +9,15 @@ class GameWindow < Gosu::Window
     super(800, 600, false)
     self.caption = "Multiplayer Paint"
     
+    @nick = nick
+    
     @font = Gosu::Font.new(self, Gosu::default_font_name, 15)
     
     @lines = ['', '', '']
     @points = []
     
     @lastdraw = nil
+    @lastcolor = Gosu::Color::BLACK
     
     @colors = [Gosu::Color::BLACK, Gosu::Color::GRAY, Gosu::Color::RED, Gosu::Color::GREEN, Gosu::Color::BLUE, Gosu::Color::YELLOW, Gosu::Color::FUCHSIA, Gosu::Color::CYAN]
     @color = 0
@@ -69,6 +72,7 @@ class GameWindow < Gosu::Window
         unpacked = data.unpack('n Z* n n n')
         coords = unpacked[2..4]
         @lastdraw = unpacked[1]
+        @lastcolor = @colors[coords[2]]
         @points << coords
       when Commands::ERASE
         unpacked = data.unpack('n Z* n n n')
@@ -103,7 +107,7 @@ class GameWindow < Gosu::Window
       @color = @colors.length - 1 if @color == -1
     when Gosu::Button::KbF5
       @points = []
-      @socket.send([Commands::CONNECT].pack('n'), 0)
+      @socket.send([Commands::CONNECT, @nick].pack('n Z*'), 0)
     end
   end
   
@@ -122,7 +126,7 @@ class GameWindow < Gosu::Window
     @font.draw(">#{text_input.text}", 0, 15*3, 2, 1.0, 1.0, Gosu::Color::BLUE) if self.text_input
     pingtext = "#{(@lastpong * 1000).round}ms"
     @font.draw(pingtext, width - @font.text_width(pingtext) - 20, 0, 2, 1.0, 1.0, Gosu::Color::BLUE)
-    @font.draw(@lastdraw, width - @font.text_width(@lastdraw) - 20, 15, 2, 1.0, 1.0, Gosu::Color::BLUE)
+    @font.draw(@lastdraw, width - @font.text_width(@lastdraw) - 20, 15, 2, 1.0, 1.0, @lastcolor)
     @points.each do |point|
     #@points.each_cons(2) do |a, b|
       #draw_line(a[0], a[1], @colors[a[2]], b[0], b[1], @colors[b[2]], 1)
