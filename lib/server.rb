@@ -33,9 +33,9 @@ class Server
       when Commands::CONNECT
         @nicks[sender] = data.unpack('n Z*')[1]
         @clients << sender unless @clients.include?(sender)
-        broadcast([Commands::CONNECT, @nicks[sender]].pack('n a*x'))
-        @points.each do |point|
-          @socket.send([Commands::DRAW, '', point[0], point[1], point[2]].pack('n Z* n n n'), 0, Addrinfo.new(sender[0..3]))
+        broadcast([Commands::CONNECT, @nicks[sender]].pack('n Z*'))
+        @points.each_slice(1024) do |points|
+          @socket.send([Commands::DRAW, '', *points].pack('n Z* n*'), 0, Addrinfo.new(sender[0..3]))
         end
         puts "CONNECT #{sender[3]}/#{@nicks[sender]}"
       when Commands::DISCONNECT

@@ -69,11 +69,12 @@ class GameWindow < Gosu::Window
         user = data.unpack('n Z*')[1]
         append_line("#{user} disconnected")
       when Commands::DRAW
-        unpacked = data.unpack('n Z* n n n')
-        coords = unpacked[2..4]
+        unpacked = data.unpack('n Z* n*')
         @lastdraw = unpacked[1]
-        @lastcolor = @colors[coords[2]]
-        @points << coords
+        unpacked[2..-1].each_slice(3) do |point|
+          @lastcolor = @colors[point[2]]
+          @points << point
+        end
       when Commands::ERASE
         unpacked = data.unpack('n Z* n n n')
         coords = unpacked[2..4]
