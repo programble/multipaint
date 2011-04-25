@@ -32,7 +32,7 @@ class Server
       when Commands::CONNECT
         sender << data.unpack('n Z*')[1]
         @clients << sender unless @clients.include?(sender)
-        broadcast([Commands::CONNECT, sender[5]].pack('n a*x'))
+        broadcast([Commands::CONNECT, sender[4]].pack('n a*x'))
         @points.each do |point|
           @socket.send([Commands::DRAW, '', point[0], point[1], point[2]].pack('n Z* n n n'), 0, Addrinfo.new(sender[0..3]))
         end
