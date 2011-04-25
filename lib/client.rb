@@ -57,7 +57,7 @@ class GameWindow < Gosu::Window
         data = @socket.recv_nonblock(65536)
       rescue Errno::EWOULDBLOCK
         break
-      rescue Errno::AGAIN
+      rescue Errno::EAGAIN
         break
       end
       command = data.unpack('n')[0]
