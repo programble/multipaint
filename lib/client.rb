@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__)))
 require 'commands'
 
 class GameWindow < Gosu::Window
-  def initialize(host, port=5303)
+  def initialize(host, nick='loser', port=5303)
     super(800, 600, false)
     self.caption = "Multiplayer Paint"
     
@@ -21,7 +21,7 @@ class GameWindow < Gosu::Window
     
     @socket = UDPSocket.new
     @socket.connect(host, port)
-    @socket.send([Commands::CONNECT].pack('n'), 0)
+    @socket.send([Commands::CONNECT, nick].pack('n Z*'), 0)
     
     Thread.new do
       while true

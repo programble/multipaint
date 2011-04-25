@@ -2,5 +2,5 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'client'
 
-client = GameWindow.new(*ARGV)
+client = GameWindow.new(ARGV[0], ARGV[1] ? ARGV[1] : 'loser')
 client.show
