@@ -15,7 +15,7 @@ class Server
   
   def broadcast(data)
     @clients.each do |client|
-      @socket.send(data, 0, Addrinfo.new(client))
+      @socket.send(data, 0, Addrinfo.new(client[0..3]))
     end
   end
   
@@ -33,7 +33,7 @@ class Server
         @clients << sender unless @clients.include?(sender)
         broadcast([Commands::CONNECT, sender[3]].pack('n a*x'))
         @points.each do |point|
-          @socket.send([Commands::DRAW, '', point[0], point[1], point[2]].pack('n Z* n n n'), 0, Addrinfo.new(sender))
+          @socket.send([Commands::DRAW, '', point[0], point[1], point[2]].pack('n Z* n n n'), 0, Addrinfo.new(sender[0..3]))
         end
         puts "CONNECT #{sender[3]}"
       when Commands::DISCONNECT
@@ -60,7 +60,7 @@ class Server
         end
       when Commands::PINGPONG
         puts "PING #{sender[3]} #{data.inspect}"
-        @socket.send(data, 0, Addrinfo.new(sender))
+        @socket.send(data, 0, Addrinfo.new(sender[0..3]))
       end
     end
   end
