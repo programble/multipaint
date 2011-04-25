@@ -73,7 +73,7 @@ class GameWindow < Gosu::Window
         @lastdraw = unpacked[1]
         unpacked[2..-1].each_slice(3) do |point|
           @lastcolor = @colors[point[2]]
-          @points << point
+          @points << point unless @points.include?(point)
         end
       when Commands::ERASE
         unpacked = data.unpack('n Z* n n n')
@@ -107,7 +107,7 @@ class GameWindow < Gosu::Window
       @color -= 1
       @color = @colors.length - 1 if @color == -1
     when Gosu::Button::KbF5
-      @points = []
+      #@points = []
       @socket.send([Commands::CONNECT, @nick].pack('n Z*'), 0)
     end
   end
