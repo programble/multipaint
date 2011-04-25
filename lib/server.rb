@@ -36,6 +36,7 @@ class Server
         broadcast([Commands::CONNECT, @nicks[sender]].pack('n Z*'))
         @points.each_slice(1024) do |points|
           @socket.send([Commands::DRAW, '', *points.flatten].pack('n Z* n*'), 0, Addrinfo.new(sender[0..3]))
+          sleep 0.1
         end
         puts "CONNECT #{sender[3]}/#{@nicks[sender]}"
       when Commands::DISCONNECT
