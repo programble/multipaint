@@ -76,10 +76,11 @@ class GameWindow < Gosu::Window
           @points << point
         end
       when Commands::ERASE
-        unpacked = data.unpack('n Z* n n n')
-        coords = unpacked[2..4]
+        unpacked = data.unpack('n Z* n*')
         @lastdraw = unpacked[1]
-        @points.delete(coords)
+        unpacked[2..-1].each_slice(3) do |point|
+          @points.delete(point)
+        end
       when Commands::MESSAGE
         user, msg = data.unpack('n Z* Z*')[1..2]
         append_line("#{user}: #{msg}")
